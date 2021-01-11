@@ -1,0 +1,118 @@
+
+Sub defining_tickers()
+
+'Defining everything
+    Dim ws As Worksheet
+    Dim ticker As String
+    Dim year_open As Double
+    Dim year_close As Double
+    Dim yearly_change As Double
+    Dim percent_change As Double
+    Dim vol As Integer
+    Dim greatest_percent_increase As Double
+    Dim greatest_percent_decrease As Double
+    Dim greatest_total_vol As Integer
+    Dim max As Long
+    
+    
+'Preventing error and run thoguh all worksheets
+    On Error Resume Next
+    For Each ws In ThisWorkbook.Worksheets
+
+'Headers for everything
+    ws.Cells(1, 9).Value = "Ticker"
+    ws.Cells(1, 10).Value = "Yearly Change"
+    ws.Cells(1, 11).Value = "Percent Change"
+    ws.Cells(1, 12).Value = "Total Stock Volume"
+    ws.Cells(1, 12).Value = "Total Stock Volume"
+    
+    ws.Cells(2, 15).Value = "Greatest % increase"
+    ws.Cells(3, 15).Value = "Greatest % decrease"
+    ws.Cells(4, 15).Value = "Greatest Total Volume"
+    ws.Cells(1, 16).Value = "Ticker"
+    ws.Cells(1, 17).Value = "Value"
+    
+    'Prepare integers for loop
+        Summary_Table_Row = st
+        st = 2
+
+    'Values Loop
+        For i = 2 To ws.UsedRange.Rows.Count
+             If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+            
+            'Idenitfy all the values
+                ticker = ws.Cells(i, 1).Value
+                vol = ws.Cells(i, 7).Value
+                year_open = ws.Cells(i, 3).Value
+                year_close = ws.Cells(i, 6).Value
+                yearly_change = year_close - year_open
+                percent_change = (year_close - year_open) / year_close
+
+         
+            'Add values to the summary table
+                ws.Cells(st, 9).Value = ticker
+                ws.Cells(st, 10).Value = yearly_change
+                ws.Cells(st, 11).Value = percent_change
+                ws.Cells(st, 12).Value = vol
+                st = st + 1
+            
+             vol = 0
+        
+        End If
+
+'End loop
+    Next i
+
+ 'Summary table 2, identifying max, min and volume
+        ws.Cells(2, 17).Value = WorksheetFunction.max(Range("K:K"))
+        ws.Cells(3, 17).Value = WorksheetFunction.Min(Range("K:K"))
+        ws.Cells(4, 17).Value = WorksheetFunction.max(Range("L:L"))
+
+ 
+
+
+'Specify percentage % for columns neeeded
+    ws.Columns("K").NumberFormat = "0.00%"
+    ws.Range("Q2", "Q3").NumberFormat = "0.00%"
+
+
+    For i = 2 To finalIteration
+        If Cells(i, 10).Value > 0 Then
+            Cells(i, 10).Interior.ColorIndex = 4
+        
+        ElseIf Cells(i, 10).Value < 0 Then
+            Cells(i, 10).Interior.ColorIndex = 3
+        
+        'Adjust to autofit column width for totals*
+            Columns("J").NumberFormat = "0.000000"
+            Columns("K").AutoFit
+            Columns("L").AutoFit
+        
+        End If
+        Next i
+        
+'Matching ticker symbols for summary table 2
+        For i = 2 To ws.UsedRange.Rows.Count
+        
+        If Cells(i, 11).Value = ws.Cells(2, 17).Value Then
+            ws.Cells(2, 16).Value = Cells(i, 9).Value
+        End If
+        
+        If Cells(i, 11).Value = ws.Cells(3, 17).Value Then
+            ws.Cells(3, 16).Value = Cells(i, 9).Value
+        End If
+        
+        If Cells(i, 12).Value = ws.Cells(4, 17).Value Then
+            ws.Cells(4, 16).Value = Cells(i, 9).Value
+        End If
+        
+        Next i
+
+'Go on to the next worksheet
+Next ws
+
+
+End Sub
+
+
+
