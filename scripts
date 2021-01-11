@@ -35,28 +35,31 @@ Sub defining_tickers()
     'Prepare integers for loop
         Summary_Table_Row = st
         st = 2
-
+    
     'Values Loop
         For i = 2 To ws.UsedRange.Rows.Count
-             If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+             If ws.Cells(i + 1, 1).Value = ws.Cells(i, 1).Value Then
+                vol = vol + Cells(i, 7).Value
+            Else
             
             'Idenitfy all the values
                 ticker = ws.Cells(i, 1).Value
-                vol = ws.Cells(i, 7).Value
+                vol = vol + Cells(i, 7).Value
                 year_open = ws.Cells(i, 3).Value
                 year_close = ws.Cells(i, 6).Value
                 yearly_change = year_close - year_open
                 percent_change = (year_close - year_open) / year_close
-
-         
+        
             'Add values to the summary table
                 ws.Cells(st, 9).Value = ticker
                 ws.Cells(st, 10).Value = yearly_change
                 ws.Cells(st, 11).Value = percent_change
                 ws.Cells(st, 12).Value = vol
                 st = st + 1
-            
+                
+            'Resetting thestock total
              vol = 0
+             vol = vol + Cells(i, 7).Value
         
         End If
 
@@ -76,7 +79,7 @@ Sub defining_tickers()
     ws.Range("Q2", "Q3").NumberFormat = "0.00%"
 
 
-    For i = 2 To finalIteration
+    For i = 2 To ws.UsedRange.Rows.Count
         If Cells(i, 10).Value > 0 Then
             Cells(i, 10).Interior.ColorIndex = 4
         
@@ -108,7 +111,11 @@ Sub defining_tickers()
         
         Next i
 
+   
+
+
 'Go on to the next worksheet
+
 Next ws
 
 
